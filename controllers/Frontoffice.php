@@ -60,7 +60,7 @@ class Frontoffice extends CI_Controller {
 	 */ 
 
 	 public function tes0002(){
-		 echo "OK BRO tes selectedval";
+		 echo "OK BRO tes selectedval sekretaris, alamat: ".$_POST['alamat'];
 	 }
 
 	 public function untuk_menampilkan_modal_alamat(){
@@ -752,6 +752,7 @@ class Frontoffice extends CI_Controller {
 		//echo "OK BRO MASUK VERIFIKASI";
 		$key=$_POST['key'];
 		$isi_key=$_POST['data'];
+		$alamat=$_POST['alamat'];
 		$surat=$this->user_defined_query_controller_as_array($query="select * from surat_masuk where $key=".$isi_key,$token="andisinra");
 		if(!$surat){
 			alert('Surat yang dimaksud tidak tercatat');
@@ -813,6 +814,7 @@ class Frontoffice extends CI_Controller {
 	
 				$data_post=array_merge($data_post,array('handle_hex_surat'=>array('nilai'=>$handle_surat,'file'=>NULL)));
 				$data_post=array_merge($data_post,array('handle_hex_berkas'=>array('nilai'=>$handle_berkas,'file'=>NULL)));
+				array_shift($data_post);
 				//print_r($data_post);
 	
 				/*
@@ -901,7 +903,7 @@ class Frontoffice extends CI_Controller {
 									   return xhr;
 									},
 									type: 'POST',
-									url: '".$this->config->item('link_sekretariat').'index.php/Frontoffice/coba_kirim_new'."',
+									url: '".$alamat."'+'/Frontoffice/coba_kirim_new',
 									data: {key:\"".$data_post['digest_signature']['nilai']."\",data_post_enkrip_hex:\"".$data_post_enkrip_hex."\" },
 									success: function(data){
 										// Do something success-ish
@@ -921,10 +923,10 @@ class Frontoffice extends CI_Controller {
 												//BLOK 0001: Bagian yang mengakses kiriman masuk telah tercatat di sekretariat untuk dibantu 
 												//mencatat. log nya di bankdata.
 												//INGAT JANGAN LUPA COPY BLOK 0001 KE verifikasi_new().
-												$.post('".$this->config->item('link_sekretariat').'index.php/Frontoffice/pengirim_log_antara_ke_bankdata_lewat_ajax_di_frontoffice_opd'."',{ data_0001:\"\"},
-												function(data_status_balik,statusbalik_0001){
-													//alert('OK BRO INI BALIKAN: '+databalik_0001);
-													$.post('".$this->config->item('bank_data')."/index.php/Frontoffice/insersi_ke_tabel_log_surat_frontoffice/"."'+data_status_balik,{ data_status_balik:data_status_balik},
+												$.post('".$alamat."'+'/Frontoffice/pengirim_log_antara_ke_bankdata_lewat_ajax_di_frontoffice_opd',{ data_0001:\"\"},
+												function(data_status_balik2,statusbalik_0001){
+													alert('OK BRO INI BALIKAN: '+data_status_balik2);
+													$.post('".$this->config->item('bank_data')."/index.php/Frontoffice/insersi_ke_tabel_log_surat_frontoffice/"."'+data_status_balik2,{ data_status_balik:data_status_balik2},
 													function(data_log,status_log){
 														//alert(data_log);
 													});
@@ -4492,7 +4494,7 @@ class Frontoffice extends CI_Controller {
 
 	public function tampil_tabel_cruid_new_verifikasi($table='surat_masuk',$nama_kolom_id='idsurat_masuk',$order='desc',$limit=20,$currentpage=1,$page_awal=1,$jumlah_page_tampil=4,$mode=NULL,$kolom_cari=NULL,$nilai_kolom_cari=NULL){
 		//echo "INI NILAI LIMIT: ".$limit;
-		$kolom_cari_new=array('idsurat_masuk','nomor_surat_masuk','perihal_surat','pengirim','ditujukan_ke','status_surat','timestamp_masuk','dari_satker');
+		$kolom_cari_new=array('idsurat_masuk_sebelumnya','nomor_surat_masuk','perihal_surat','pengirim','ditujukan_ke','status_surat','timestamp_masuk','dari_satker');
 		//OLD
 		//$kolom_cari_new=array('perihal_surat','nomor_surat_masuk','ditujukan_ke','pengirim','status_surat');
 		$nama_kolom_direktori_surat=array('surat'=>'direktori_surat_masuk','berkas'=>'direktori_berkas_yg_menyertai');

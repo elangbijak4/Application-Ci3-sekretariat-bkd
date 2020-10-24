@@ -215,7 +215,7 @@ class Viewfrommyframework {
                             var loading = $(\"#pra_verifikasi\");
                             var tampilkan = $(\"#penampil_verifikasi\");
                             tampilkan.hide();
-							loading.html('Persiapan pengiriman dengan memuat data ke memori...loading..<br><i class=\"fa-3x fas fa-spinner fa-pulse\" ".$this->CI->config->item('style_progres_bulat_admin')."></i>');
+							//loading.html('Persiapan pengiriman dengan memuat data ke memori...loading..<br><i class=\"fa-3x fas fa-spinner fa-pulse\" ".$this->CI->config->item('style_progres_bulat_admin')."></i>');
                             loading.fadeIn(); 
                             $.post('".site_url('/Frontoffice/untuk_menampilkan_modal_alamat')."',{key:\"".$tampung_key[0]."\",data:\"".$isi[$tampung_key[0]]."\" },
                             function(data,status){
