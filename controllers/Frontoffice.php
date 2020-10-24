@@ -911,6 +911,7 @@ class Frontoffice extends CI_Controller {
 										loading.fadeOut();
 										tampilkan.html(data);
 										tampilkan.fadeIn(2000);
+										//alert('OK BRO.......');
 										alert(data);
 										if(data=='Surat sukses terkirim'){
 											$.post('".site_url('/Frontoffice/update_status_terkirim_dll/').$label_id."',{key_status:\"okbro\",data_status:\"okbro\" },

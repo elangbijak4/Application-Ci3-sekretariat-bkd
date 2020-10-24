@@ -214,6 +214,7 @@ class Viewfrommyframework {
                         $(\"#teruskan_new$keyisi\").click(function(){
                             var loading = $(\"#pra_verifikasi\");
                             var tampilkan = $(\"#penampil_verifikasi\");
+                            tampilkan.html(''); //hapus tampilan sebelumnya
                             tampilkan.hide();
 							//loading.html('Persiapan pengiriman dengan memuat data ke memori...loading..<br><i class=\"fa-3x fas fa-spinner fa-pulse\" ".$this->CI->config->item('style_progres_bulat_admin')."></i>');
                             loading.fadeIn(); 
