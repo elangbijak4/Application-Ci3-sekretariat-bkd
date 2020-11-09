@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+date_default_timezone_set('Asia/Makassar');
 /**
  * catatan path unggah berkas saat memanggil?
  * start: index.php di view
@@ -52,7 +53,18 @@ class Frontoffice extends CI_Controller {
 		//$this->load->view('front_office',$data1);
 		$this->load->view('loginpage');
 	}
-
+	
+	//===========================================TAMBAHAN KHUSUS UNTUK CRUID NEW VERIFIKASI================================================
+	public function tampilkan_tabel_terusan_new_verifikasi(){
+		//$Recordset=$this->user_defined_query_controller_as_array($query='select * from surat_masuk',$token="andisinra");
+		$this->model_frommyframework->reset_counter_notifikasi($counter_table='tbcounter_notifikasi',$kolom_rujukan=array('nama_kolom'=>'idcounter_notifikasi','nilai'=>3),$kolom_target='nilai_counter');
+		$table='surat_terusan_baru';
+		$nama_kolom_id='idsurat_terusan';
+		$this->tampil_tabel_cruid_new_verifikasi($table,$nama_kolom_id,$order='desc',$limit=20,$currentpage=1,$page_awal=1,$jumlah_page_tampil=4,$mode=NULL,$kolom_cari=NULL,$nilai_kolom_cari=NULL);
+		//$this->viewfrommyframework->penampil_tabel_no_foto_untuk_surat_masuk_frontoffice_surat_masuk($kolom_cari,$nama_kolom_direktori_surat,$array_atribut=array(""," class=\"table table-striped\"",""),$query='select * from surat_masuk order by idsurat_masuk desc',$submenu='',$kolom_direktori='direktori',$direktori_avatar='/public/img/no-image.jpg');
+	}	
+	//===========================================END TAMBAHAN KHUSUS UNTUK CRUID NEW VERIFIKASI============================================
+	
 	//===========================================TAMBAHAN KODE UNTUK AKSES API ALAMAT DAN TERUSKAN KE BIDANG===============================
 	/**
 	 * Bagian ini untuk membuat fungsi yang menampilkan modal memilih alamat penerusan
@@ -237,7 +249,7 @@ class Frontoffice extends CI_Controller {
 		$kolom_rujukan['nama_kolom']=$key;
 		$kolom_rujukan['nilai']=$isi_key;
 		$kolom_target='timestamp_dipending';
-		$data[$kolom_target]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+		$data[$kolom_target]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_masuk',$kolom_rujukan,$data);
 
 		$kiriman[26]=$data[$kolom_target];
@@ -246,10 +258,10 @@ class Frontoffice extends CI_Controller {
 		$kolom_rujukan['nama_kolom']=$key;
 		$kolom_rujukan['nilai']=$isi_key;
 		$kolom_target='keterangan';
-		$data[$kolom_target]=$message_pending;
-		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_masuk',$kolom_rujukan,$data);
-
-		$kiriman[19]=$message_pending;
+		$data[$kolom_target]="<h5>Keterangan Status <span class=\"badge badge-warning\">Dipending</span></h5><p>Isi Keterangan: <br>".$message_pending."</p><span class=\"badge badge-primary\">Pembuat Keterangan: ".$this->config->item('nama_bidang_pendek')."</span><br><span class=\"badge badge-primary\">Tanggal: ".date("d/m/Y")."</span><br><span class=\"badge badge-primary\">Jam: ".date("H:i:s")."</span><hr><br>";
+		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_terusan_baru',$kolom_rujukan,$data);
+ 
+		$kiriman[19]=$data[$kolom_target];
 		$kiriman[20]='dipending';
 		
 		//Kirim balik untuk di log verifikasi_new() lewat call ajax dari verifikasi_new()
@@ -477,7 +489,7 @@ class Frontoffice extends CI_Controller {
 		$kolom_rujukan['nama_kolom']=$key;
 		$kolom_rujukan['nilai']=$isi_key;
 		$kolom_target='timestamp_tolak';
-		$data[$kolom_target]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+		$data[$kolom_target]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_masuk',$kolom_rujukan,$data);
 
 		$kiriman[23]=$data[$kolom_target];
@@ -486,10 +498,10 @@ class Frontoffice extends CI_Controller {
 		$kolom_rujukan['nama_kolom']=$key;
 		$kolom_rujukan['nilai']=$isi_key;
 		$kolom_target='keterangan';
-		$data[$kolom_target]=$message_tolak;
-		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_masuk',$kolom_rujukan,$data);
-
-		$kiriman[19]=$message_tolak;
+		$data[$kolom_target]="<h5>Keterangan Status <span class=\"badge badge-danger\">Ditolak</span></h5><p>Isi Keterangan: <br>".$message_tolak."</p><span class=\"badge badge-primary\">Pembuat Keterangan: ".$this->config->item('nama_bidang_pendek')."</span><br><span class=\"badge badge-primary\">Tanggal: ".date("d/m/Y")."</span><br><span class=\"badge badge-primary\">Jam: ".date("H:i:s")."</span><hr><br>";
+		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_terusan_baru',$kolom_rujukan,$data);
+ 
+		$kiriman[19]=$data[$kolom_target];
 		$kiriman[20]='ditolak';
 		
 		//Kirim balik untuk di log verifikasi_new() lewat call ajax dari verifikasi_new()
@@ -532,7 +544,7 @@ class Frontoffice extends CI_Controller {
 			$kolom_rujukan['nama_kolom']=$key;
 			$kolom_rujukan['nilai']=$isi_key;
 			$kolom_target='timestamp_baca';
-			$data[$kolom_target]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+			$data[$kolom_target]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 			$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_masuk',$kolom_rujukan,$data);
 	
 			$kiriman[22]=$data[$kolom_target];
@@ -683,7 +695,7 @@ class Frontoffice extends CI_Controller {
 		$kolom_rujukan['nama_kolom']='digest_signature';
 		$kolom_rujukan['nilai']=$this->enkripsi->hexToStr($label_id);
 		$kolom_target='timestamp_diteruskan';
-		$data[$kolom_target]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+		$data[$kolom_target]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_masuk',$kolom_rujukan,$data);
 
 		//Unserialize kiriman dari verifikasi_new() lewat var session
@@ -788,6 +800,11 @@ class Frontoffice extends CI_Controller {
 			} else{
 
 				$kiriman=array();
+
+				//PEMBAHARUAN 07/11/2020
+				$data_post['keterangan']['nilai']='';
+				//END PEMBAHARUAN
+
 				foreach($data_post as $key=>$k){
 						array_push($kiriman,$k['nilai']);
 					}
@@ -980,6 +997,11 @@ class Frontoffice extends CI_Controller {
 			}
 
 			$kiriman=array();
+		
+			//PEMBAHARUAN 07/11/2020
+			$data_post['keterangan']['nilai']='';
+			//END PEMBAHARUAN
+
 			foreach($data_post as $key=>$k){
 					array_push($kiriman,$k['nilai']);
 				}
@@ -1268,7 +1290,7 @@ class Frontoffice extends CI_Controller {
 					foreach($data_post_terima as $key=>$k){
 						if(!($key=='handle_hex_surat') && !($key=='handle_hex_berkas')){
 							if($key=='timestamp_masuk'){
-								array_push($buffer,implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime())));
+								array_push($buffer,implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime())));
 							}else if($key=='posisi_surat_terakhir'){
 								array_push($buffer,"Sekretariat ".$this->config->item('nama_opd'));//sesuaikan jawaban ini dengan bidangnya, jika ini di sekretariat maka ganti dengan sekretariat '.$this->config->item('nama_opd').'
 							}else if($key=='status_surat'){
@@ -2895,7 +2917,7 @@ class Frontoffice extends CI_Controller {
 
 			$coba[17][0]='area';
 			$coba[18][7]='dibaca';
-			$coba[20][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+			$coba[20][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 			*/
 
 			$komponen=$coba;
@@ -4964,7 +4986,7 @@ class Frontoffice extends CI_Controller {
 
 			//timestamp masuk
 			$coba[21][7]='dibaca';
-			$coba[21][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+			$coba[21][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 
 			//posisi surat terakhir
 			$coba[27][7]='Sekretariat BPSDM';
@@ -4979,7 +5001,7 @@ class Frontoffice extends CI_Controller {
 			/*
 			$coba[18][7]='Sekretariat '.$this->config->item('nama_opd').'';
 			$coba[20][7]='dibaca';
-			$coba[22][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+			$coba[22][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 			$coba[29][4]='';
 			$coba[29][0]='combo_database';
 			$coba[29][7]=array("nama_urgensi_surat","nama_urgensi_surat",'urgensi_surat'); //inshaa Allah gunakan ini sekarang untuk mendefinisikan combo_database, soalnya core sudah dirubah.
@@ -10368,7 +10390,7 @@ class Frontoffice extends CI_Controller {
 					$kiriman=array();
 					foreach($data_post as $key=>$k){
 						if($key=='timestamp_masuk'){
-							array_push($kiriman,implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime())));
+							array_push($kiriman,implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime())));
 						//}else if($key=='posisi_surat_terakhir'){
 						//	array_push($kiriman,"Sekretariat BKD");
 						}else{
@@ -10496,7 +10518,7 @@ class Frontoffice extends CI_Controller {
 
 			$coba[17][0]='area';
 			$coba[18][7]='dibaca';
-			$coba[20][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+			$coba[20][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 			*/
 
 			$komponen=$coba;
@@ -14539,7 +14561,7 @@ class Frontoffice extends CI_Controller {
 
 					$coba[17][0]='area';
 					$coba[18][7]='dibaca';
-					$coba[20][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+					$coba[20][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 					*/
 
 					$komponen=$coba;
@@ -14622,7 +14644,7 @@ class Frontoffice extends CI_Controller {
 
 					$coba[17][0]='area';
 					$coba[18][7]='dibaca';
-					$coba[20][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+					$coba[20][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 					*/
 
 					$komponen=$coba;
@@ -14685,7 +14707,7 @@ class Frontoffice extends CI_Controller {
 
 					$coba[18][7]='Sekretariat '.$this->config->item('nama_opd').'';
 					$coba[20][7]='dibaca';
-					$coba[22][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+					$coba[22][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 					$coba[29][4]='';
 					$coba[29][0]='combo_database';
 					$coba[29][7]=array("nama_urgensi_surat","nama_urgensi_surat",'urgensi_surat'); //inshaa Allah gunakan ini sekarang untuk mendefinisikan combo_database, soalnya core sudah dirubah.
@@ -14777,7 +14799,7 @@ class Frontoffice extends CI_Controller {
 					$coba[10][7]=array("nama_subbidang","nama_subbidang",'subbidang'); //inshaa Allah gunakan ini sekarang untuk mendefinisikan combo_database, soalnya core sudah dirubah.
 					$coba[10][8]=$surat[0][9]; //?
 
-					$coba[11][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+					$coba[11][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 					$coba[11][4]='readonly';
 
 					//$coba[12][0]='file';
@@ -14888,7 +14910,7 @@ class Frontoffice extends CI_Controller {
 					$coba[11][7]=array("nama_subbidang","nama_subbidang",'subbidang'); //inshaa Allah gunakan ini sekarang untuk mendefinisikan combo_database, soalnya core sudah dirubah.
 					$coba[11][8]=$surat[0][10]; //?
 
-					$coba[12][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+					$coba[12][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 					$coba[12][4]='readonly';
 
 					//$coba[12][0]='file';
@@ -15000,7 +15022,7 @@ class Frontoffice extends CI_Controller {
 					$coba[11][7]=array("nama_subbidang","nama_subbidang",'subbidang'); //inshaa Allah gunakan ini sekarang untuk mendefinisikan combo_database, soalnya core sudah dirubah.
 					$coba[11][8]=$surat[0][10]; //?
 
-					$coba[12][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+					$coba[12][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 					$coba[12][4]='readonly';
 
 					//$coba[12][0]='file';
@@ -15090,7 +15112,7 @@ class Frontoffice extends CI_Controller {
 					
 					//$coba[17][7]='Sekretariat '.$this->config->item('nama_opd').'';
 					$coba[19][7]='dibaca';
-					$coba[21][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+					$coba[21][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 					$coba[28][4]='';
 					$coba[28][0]='combo_database';
 					$coba[28][7]=array("nama_urgensi_surat","nama_urgensi_surat",'urgensi_surat'); //inshaa Allah gunakan ini sekarang untuk mendefinisikan combo_database, soalnya core sudah dirubah.
@@ -15261,7 +15283,7 @@ class Frontoffice extends CI_Controller {
 					foreach($data_post_terima as $key=>$k){
 						if(!($key=='handle_hex_surat') && !($key=='handle_hex_berkas')){
 							if($key=='timestamp_masuk'){
-								array_push($buffer,implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime())));
+								array_push($buffer,implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime())));
 							/*
 							}else if($key=='posisi_surat_terakhir'){
 								array_push($buffer,"Sekretariat '.$this->config->item('nama_opd').'");//sesuaikan jawaban ini dengan bidangnya, jika ini di sekretariat maka ganti dengan sekretariat '.$this->config->item('nama_opd').'
@@ -15345,7 +15367,7 @@ class Frontoffice extends CI_Controller {
 				$kiriman=array();
 					foreach($data_post as $key=>$k){
 						if($key=='timestamp_masuk'){
-							array_push($kiriman,implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime())));
+							array_push($kiriman,implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime())));
 						}else if($key=='posisi_surat_terakhir'){
 							array_push($kiriman,"Front Office ".$this->config->item('nama_opd')."");
 						}else{
@@ -15412,7 +15434,7 @@ class Frontoffice extends CI_Controller {
 					$kiriman=array();
 					foreach($data_post as $key=>$k){
 						if($key=='timestamp_masuk'){
-							array_push($kiriman,implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime())));
+							array_push($kiriman,implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime())));
 						}else if($key=='posisi_surat_terakhir'){
 							array_push($kiriman,"Front Office ".$this->config->item('nama_opd')."");
 						}else{
@@ -15504,7 +15526,7 @@ class Frontoffice extends CI_Controller {
 					$kiriman=array();
 					foreach($data_post as $key=>$k){
 						if($key=='timestamp_masuk'){
-							array_push($kiriman,implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime())));
+							array_push($kiriman,implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime())));
 						//}else if($key=='posisi_surat_terakhir'){
 						//	array_push($kiriman,"Sekretariat BKD");
 						}else{
@@ -15607,7 +15629,7 @@ class Frontoffice extends CI_Controller {
 					$kiriman=array();
 					foreach($data_post as $key=>$k){
 						if($key=='timestamp_masuk'){
-							array_push($kiriman,implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime())));
+							array_push($kiriman,implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime())));
 						}else if($key=='posisi_surat_terakhir'){
 							array_push($kiriman,"Sekretariat ".$this->config->item('nama_opd')."");
 						}else{
@@ -15763,7 +15785,7 @@ class Frontoffice extends CI_Controller {
 		$coba[11][7]=array("nama_subbidang","nama_subbidang",'subbidang'); //inshaa Allah gunakan ini sekarang untuk mendefinisikan combo_database, soalnya core sudah dirubah.
 		$coba[11][8]='Yang Lain (Others)';
 
-		$coba[12][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+		$coba[12][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 		$coba[12][4]='readonly';
 
 		$coba[13][0]='file';
@@ -15897,7 +15919,7 @@ class Frontoffice extends CI_Controller {
 					$kiriman=array();
 					foreach($data_post as $key=>$k){
 						if($key=='timestamp_masuk'){
-							array_push($kiriman,implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime())));
+							array_push($kiriman,implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime())));
 						}else{
 							array_push($kiriman,$k['nilai']);
 						}
@@ -15998,7 +16020,7 @@ class Frontoffice extends CI_Controller {
 					$kiriman=array();
 					foreach($data_post as $key=>$k){
 						if($key=='timestamp_masuk'){
-							array_push($kiriman,implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime())));
+							array_push($kiriman,implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime())));
 						}else{
 							array_push($kiriman,$k['nilai']);
 						}
@@ -16091,7 +16113,7 @@ class Frontoffice extends CI_Controller {
 		//$coba[10][0]='combo_manual';
 		//$coba[10][7]=array('Sekretaris Badan','Kasubbag Program','Kasubbag Keuangan','Kasubbag Umum, Kepegawaian');
 		$coba[11][0]='hidden';
-		$coba[11][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+		$coba[11][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 
 		$coba[12][0]='file';
 		$coba[13][0]='file';
@@ -16229,7 +16251,7 @@ class Frontoffice extends CI_Controller {
 		//$coba[10][0]='combo_manual';
 		//$coba[10][7]=array('Sekretaris Badan','Kasubbag Program','Kasubbag Keuangan','Kasubbag Umum, Kepegawaian');
 		$coba[11][0]='hidden';
-		$coba[11][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+		$coba[11][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 
 		$coba[12][0]='file';
 		$coba[13][0]='file';
@@ -16473,7 +16495,7 @@ class Frontoffice extends CI_Controller {
 		$coba[16][0]='date';
 		$coba[16][6]='<b>Password berlaku sampai</b>';
 		$coba[17][0]='hidden';
-		$coba[18][7]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+		$coba[18][7]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
 		$coba[18][4]='readonly';
 
 		$coba[19][0]='file';
