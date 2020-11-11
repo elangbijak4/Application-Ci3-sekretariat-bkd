@@ -188,9 +188,9 @@ class Frontoffice extends CI_Controller {
 								tampilkan.hide();
 								loading.fadeIn(); 
 								$.post('".site_url('/Frontoffice/proses_pending')."',{key:\"$key\",data:\"$isi_key\",message_pending:message_pending_var},
-								function(data,status){
+								function(data_status_balik,status){
 									//BAGIAN MENCATAT LOG KE BANKDATA
-									$.post('".$this->config->item('bank_data')."/index.php/Frontoffice/insersi_ke_tabel_log_surat_frontoffice/"."'+data,{ data:data},
+									$.post('".$this->config->item('bank_data')."/index.php/Frontoffice/insersi_ke_tabel_log_surat_frontoffice/"."'+data_status_balik,{ data_status_balik:data_status_balik},
 									function(data_log,status_log){
 									});
 									alert('Status surat berubah menjadi pending...')
@@ -217,10 +217,12 @@ class Frontoffice extends CI_Controller {
 	}
 
 	public function proses_pending(){
-		//echo "OK BRO, INI TEMPAT PENDING";
+		//alert("OK BRO, INI TEMPAT PENDING");
+		//$key='idsurat_masuk';//$_POST['key'];
+		//$isi_key=150;//$_POST['data'];
 		$key=$_POST['key'];
 		$isi_key=$_POST['data'];
-		$message_pending=$_POST['message_pending'];
+		$message_pending='ok bro';//$_POST['message_pending'];
 		$surat=$this->user_defined_query_controller_as_array($query="select * from surat_masuk where $key=".$isi_key,$token="andisinra");
 		if(!$surat){
 			alert('Surat yang dimaksud tidak tercatat');
@@ -259,10 +261,14 @@ class Frontoffice extends CI_Controller {
 		$kolom_rujukan['nilai']=$isi_key;
 		$kolom_target='keterangan';
 		$data[$kolom_target]="<h5>Keterangan Status <span class=\"badge badge-warning\">Dipending</span></h5><p>Isi Keterangan: <br>".$message_pending."</p><span class=\"badge badge-primary\">Pembuat Keterangan: ".$this->config->item('nama_bidang_pendek')."</span><br><span class=\"badge badge-primary\">Tanggal: ".date("d/m/Y")."</span><br><span class=\"badge badge-primary\">Jam: ".date("H:i:s")."</span><hr><br>";
-		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_terusan_baru',$kolom_rujukan,$data);
+		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_masuk',$kolom_rujukan,$data);
  
 		$kiriman[19]=$data[$kolom_target];
 		$kiriman[20]='dipending';
+
+		//INI PENYEBAB KEMARIN TIDAK BISA MASUK KE DALAM LOG, KARENA INDEKS NOL HARUS NULL.
+		$kiriman[0]=NULL;
+		//print_r($kiriman);
 		
 		//Kirim balik untuk di log verifikasi_new() lewat call ajax dari verifikasi_new()
 		//array_unshift($kiriman,NULL); ga usah di sekretariat karena format surat_masuk sudah sesuai format tabel log_surat_masuk di bankdata
@@ -499,10 +505,11 @@ class Frontoffice extends CI_Controller {
 		$kolom_rujukan['nilai']=$isi_key;
 		$kolom_target='keterangan';
 		$data[$kolom_target]="<h5>Keterangan Status <span class=\"badge badge-danger\">Ditolak</span></h5><p>Isi Keterangan: <br>".$message_tolak."</p><span class=\"badge badge-primary\">Pembuat Keterangan: ".$this->config->item('nama_bidang_pendek')."</span><br><span class=\"badge badge-primary\">Tanggal: ".date("d/m/Y")."</span><br><span class=\"badge badge-primary\">Jam: ".date("H:i:s")."</span><hr><br>";
-		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_terusan_baru',$kolom_rujukan,$data);
+		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_masuk',$kolom_rujukan,$data);
  
 		$kiriman[19]=$data[$kolom_target];
 		$kiriman[20]='ditolak';
+		$kiriman[0]=NULL;
 		
 		//Kirim balik untuk di log verifikasi_new() lewat call ajax dari verifikasi_new()
 		//array_unshift($kiriman,NULL); ga usah di sekretariat karena format surat_masuk sudah sesuai format tabel log_surat_masuk di bankdata
@@ -549,6 +556,7 @@ class Frontoffice extends CI_Controller {
 	
 			$kiriman[22]=$data[$kolom_target];
 			$kiriman[20]='dibaca';
+			$kiriman[0]=NULL;
 			
 			//Kirim balik untuk di log verifikasi_new() lewat call ajax dari verifikasi_new()
 			//array_unshift($kiriman,NULL); ga usah di sekretariat karena format surat_masuk sudah sesuai format tabel log_surat_masuk di bankdata
@@ -702,6 +710,7 @@ class Frontoffice extends CI_Controller {
 		$kiriman=unserialize($this->session->userdata('kiriman_surat'));//$user = $this->session->userdata('user');
 		$kiriman[20]='diteruskan';
 		$kiriman[24]=$data[$kolom_target];
+		$kiriman[0]=NULL;
 		
 		//Kirim balik untuk di log verifikasi_new() lewat call ajax dari verifikasi_new()
 		//array_unshift($kiriman,NULL); ga usah di sekretariat karena format surat_masuk sudah sesuai format tabel log_surat_masuk di bankdata
