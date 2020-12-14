@@ -31,6 +31,7 @@ $config['base_domain']='https://localhost';
 $config['base_url'] =$config['base_domain'].'/sekretariat-bkd';
 $config['bank_data']=$config['base_domain'].'/admin_bankdata';
 $config['nama_opd']='BKD';
+$config['nama_opd_panjang']='BADAN KEPEGAWAIAN DAERAH';
 $config['nama_landingpage']=$config['base_domain'].'/sistrabkdsulsel-ver02';
 $config['nama_bidang']='Sekretariat BKD Provinsi Sulawesi Selatan';
 $config['nama_bidang_pendek']='Sekretariat';
